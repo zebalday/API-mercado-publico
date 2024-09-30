@@ -27,12 +27,17 @@ TEST_TICKET = os.getenv('TEST_TICKET')
 API_TICKET = os.getenv('API_TICKET')
 DATA_DIR = os.getenv('DATA_DIR')
 DATAFRAME_PATH = os.getenv('DATAFRAME_PATH')
+PARAMETROS_BUSQUEDA = os.getenv('PARAMETROS_BUSQUEDA')
 
 
 # API CLASS
 class MercadoAPI():
 
-    # ATRIBUTOS
+    """ 
+    ********************************************
+                    ATRIBUTOS
+    ********************************************
+    """
 
     # URL base de API
     BASE_URL: str = 'https://api.mercadopublico.cl/servicios/v1/publico/'
@@ -41,7 +46,12 @@ class MercadoAPI():
 
 
 
-    # MÉTODOS DE CLASE
+    """ 
+    ********************************************
+                MÉTODOS DE CLASE
+    ********************************************
+    """
+
 
     # Constructor
     def __init__(
@@ -154,8 +164,12 @@ class MercadoAPI():
         if not df.empty:
             # Eliminar columna
             df = df.drop(['CodigoEstado'], axis = 1)
-            # Filtrar por nombre y reemplazar comas
-            df = df[df['Nombre'].str.contains(r'(?i)datos')]
+            
+            # Filtrar por licitaciones utilizando parámetros de búsqueda
+            parametros = self.prepare_parametros_busqueda(PARAMETROS_BUSQUEDA)
+            df = df[df['Nombre'].str.contains(fr'(?i){parametros}')]
+
+            # Reemplazar comas por espacios para evitar errores en .csv
             df['Nombre']= df['Nombre'].str.replace(',', ' ', regex = False)
         
             # AGREGAR INFORMACION ADICIONAL AL DATAFRAME
@@ -290,7 +304,7 @@ class MercadoAPI():
     
     # Guardar licitaciones diarias sobreescribiendo archivo .csv
     # utilizando la ruta DATAFRAME_PATH del entorno (licitaciones_diarias.csv)
-    def save_licitaciones(
+    def save_licitaciones_daliy(
             self, 
             dataframe: DataFrame, 
             path: str = None
@@ -360,3 +374,25 @@ class MercadoAPI():
             # Guardar nuevo dataframe
             dataframe.to_csv(path, index = False)
             print(ex)   
+
+
+    """ 
+    ********************************************
+                MÉTODOS ESTÁTICOS
+    ********************************************
+    """
+
+
+    # Preparar parámetros de búsqueda para filtrar
+    # licitaciones en base a su nombre.
+    
+    @staticmethod
+    def prepare_parametros_busqueda(
+            parametros: str = 'datos'
+        ) -> str:
+
+        parametros = parametros.split(',')
+        parametros = [filtro.strip() for filtro in parametros]
+        parametros = '|'.join(parametros)
+
+        return parametros

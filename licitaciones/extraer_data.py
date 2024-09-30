@@ -12,7 +12,7 @@ PATH = os.getenv('DATAFRAME_PATH_DAILY')
 API = MercadoAPI(ticket = TICKET)
 
 # Guardar licitaciones del día
-API.save_licitaciones(
+API.save_licitaciones_daliy(
     dataframe = API.list_licitaciones(),
     path = PATH
 )
