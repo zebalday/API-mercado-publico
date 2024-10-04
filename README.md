@@ -1,7 +1,7 @@
 # API MERCADO PÚBLICO
 
 Este script de python recopila todos los registros de la API
-de api.mercadopublico.cl, los filtra en base a su contenido,
+de [api.mercadopublico.cl](https://api.mercadopublico.cl/), los filtra en base a su contenido,
 los convierte en un dataframe y los guarda en en un archivo CSV.
 
 Tiene por objetivo almacenar registros de licitaciones
